@@ -3,6 +3,7 @@ package fr.enssat.berrou_couillard.interfaces_riches;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.VideoView;
@@ -57,4 +58,12 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    private View.OnClickListener chaptersListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final int position = (int)v.getTag();
+            vidView.seekTo(position);
+        }
+    };
 }
