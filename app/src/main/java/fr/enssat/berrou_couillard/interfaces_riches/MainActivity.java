@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         // Vidéo view
         vidView = (VideoView)findViewById(R.id.videoView);
         // Par défault on met la première vidéo
-        vidView.setVideoURI(Uri.parse(currentMovie.getUrl()));
+        vidView.setVideoURI();
         vidView.start();
         // Activer Vidéo Control
         vidControl = new MediaController(this);
