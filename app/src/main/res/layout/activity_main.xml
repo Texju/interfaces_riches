@@ -29,4 +29,12 @@
             android:orientation="horizontal"
             android:id="@+id/chapters"/>
     </HorizontalScrollView>
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapview"
+        android:layout_width="309dp"
+        android:layout_height="101dp"
+        android:layout_weight="3"
+        tools:layout_editor_absoluteX="37dp"
+        tools:layout_editor_absoluteY="399dp" />
 </android.support.constraint.ConstraintLayout>
