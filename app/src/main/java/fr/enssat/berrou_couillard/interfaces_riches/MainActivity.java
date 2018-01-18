@@ -12,11 +12,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.VideoView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
 
     private void readFile() {
         InputStream inputStream = getResources().openRawResource(R.raw.chapters);
@@ -150,6 +149,36 @@ public class MainActivity extends AppCompatActivity {
         mMapView.onResume();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mMapView.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mMapView.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mMapView.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mMapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mMapView.onLowMemory();
+    }
+
     private void initMap(){
         mMapView.getMapAsync (new OnMapReadyCallback() {
             @Override
@@ -182,6 +211,24 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    /**
+     * Classe customisée pour la webView du layout
+     */
+    private class MyWebViewClient extends WebViewClient {
+        /**
+         * Méthode qui évite de naviguer sur la WebView comme on le souhaite.
+         * Permet d'éviter de naviguer sur d'autre url excepté celles du film dans le fichier chapters.json
+         * @param view
+         * @param url
+         * @return boolean True ou False si nous devons changer l'url courante de la WebView
+         */
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return false;
+        }
     }
 
 }
