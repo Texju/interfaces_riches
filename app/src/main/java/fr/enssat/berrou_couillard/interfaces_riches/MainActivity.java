@@ -61,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void readFile() {
@@ -111,9 +109,19 @@ public class MainActivity extends AppCompatActivity {
     private View.OnClickListener chaptersListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final int position = (int)v.getTag();
-            Log.v("APP", String.valueOf(position));
-            vidView.seekTo(position*1000);
+            vidView.seekTo((int)v.getTag()*1000);
+            JSONArray jArray = null;
+            try {
+                jArray = jObject.getJSONArray("Keywords");
+                for (int i = 0; i < jArray.length(); i++) {
+                    if ((int) v.getTag() == jArray.getJSONObject(i).getInt("pos")) {
+                        JSONArray data = jArray.getJSONObject(i).getJSONArray("data");
+                        myWebViewClient.shouldOverrideUrlLoading(browser, data.getJSONObject(0).getString("url"));
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     };
 
@@ -123,23 +131,13 @@ public class MainActivity extends AppCompatActivity {
     private class MyWebViewClient extends WebViewClient {
         /**
          * Méthode qui évite de naviguer sur la WebView comme on le souhaite.
-         * Permet d'éviter de naviguer sur d'autre url excepté celles du film dans le fichier movies.xml
+         * Permet d'éviter de naviguer sur d'autre url excepté celles du film dans le fichier chapters.json
          * @param view
          * @param url
          * @return boolean True ou False si nous devons changer l'url courante de la WebView
          */
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            /*for(Chapter ch: currentMovie.getChapitres()) {
-                if (url.equals(ch.getUrl())){
-                    // On peut changer d'url car elle est dans le fichier
-                    view.loadUrl(url); // load the url
-                    return true;
-                }
-            }
-            // changement d'URL refusée car elle n'est pas en lien avec le film
-            view.loadUrl(currentChapter.getUrl());
-            return false;*/
             view.loadUrl(url);
             return true;
         }
