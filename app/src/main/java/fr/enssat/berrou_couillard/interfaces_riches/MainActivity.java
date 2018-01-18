@@ -3,18 +3,18 @@ package fr.enssat.berrou_couillard.interfaces_riches;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -24,14 +24,22 @@ import java.io.InputStream;
 public class MainActivity extends AppCompatActivity {
     private VideoView vidView;
     private MediaController vidControl;
+    private JSONObject jObject;
+    private WebView browser;
+    private MyWebViewClient myWebViewClient = new MyWebViewClient();
     private MapView mMapView;
-    private
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Lecture du fichier Json pour obtenir les informations
+        // plus rapidement et simplement dans la variable jObject
+        readFile();
+        // Webview
+        browser = (WebView) findViewById(R.id.webView);
+        browser.setWebViewClient(myWebViewClient);
+        browser.getSettings().setJavaScriptEnabled(true);
 
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
@@ -42,16 +50,28 @@ public class MainActivity extends AppCompatActivity {
 
         // Vidéo view
         vidView = (VideoView)findViewById(R.id.videoView);
-        // Par défault on met la première vidéo
-        vidView.setVideoURI("https://ia801406.us.archive.org/32/items/Route_66_-_an_American_badDream/Route_66_-_an_American_badDream_512kb.mp4");
+        // URL de la vidéo pour la lancer et de la webView
+        try {
+            JSONObject jFilm = jObject.getJSONObject("Film");
+            vidView.setVideoURI(Uri.parse(jFilm.getString("file_url")));
+            myWebViewClient.shouldOverrideUrlLoading(browser, jFilm.getString("synopsis_url"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         vidView.start();
         // Activer Vidéo Control
         vidControl = new MediaController(this);
         vidControl.setAnchorView(vidView);
         vidView.setMediaController(vidControl);
+        // Chargement des boutons pour les chapitres
+        try {
+            initChapters();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void initChapters(){
+    private void readFile() {
         InputStream inputStream = getResources().openRawResource(R.raw.chapters);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
@@ -67,7 +87,13 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         try {
-            JSONObject jObject = new JSONObject(byteArrayOutputStream.toString());
+            jObject = new JSONObject(byteArrayOutputStream.toString());
+        } catch (Exception e) {
+        e.printStackTrace();
+        }
+    }
+
+    private void initChapters() throws JSONException {
             JSONArray jArray = jObject.getJSONArray("Chapters");
             int pos = 0;
             String title = "";
@@ -79,21 +105,31 @@ public class MainActivity extends AppCompatActivity {
                 pos = jArray.getJSONObject(i).getInt("pos");
                 title = jArray.getJSONObject(i).getString("title");
                 Button button = new Button(this);
+                // ajoute l'information pour l'endroit où se situer dans la vidéo
                 button.setTag(pos);
                 button.setText(title);
                 button.setLayoutParams(layoutParams);
                 button.setOnClickListener(chaptersListener);
                 chapters.addView(button);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
+
     private View.OnClickListener chaptersListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final int position = (int)v.getTag();
-            vidView.seekTo(position);
+            vidView.seekTo((int)v.getTag()*1000);
+            JSONArray jArray = null;
+            try {
+                jArray = jObject.getJSONArray("Keywords");
+                for (int i = 0; i < jArray.length(); i++) {
+                    if ((int) v.getTag() == jArray.getJSONObject(i).getInt("pos")) {
+                        JSONArray data = jArray.getJSONObject(i).getJSONArray("data");
+                        myWebViewClient.shouldOverrideUrlLoading(browser, data.getJSONObject(0).getString("url"));
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     };
 
