@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         // Vidéo view
         vidView = (VideoView)findViewById(R.id.videoView);
         // Par défault on met la première vidéo
-        vidView.setVideoURI();
+        vidView.setVideoURI("https://ia801406.us.archive.org/32/items/Route_66_-_an_American_badDream/Route_66_-_an_American_badDream_512kb.mp4");
         vidView.start();
         // Activer Vidéo Control
         vidControl = new MediaController(this);
