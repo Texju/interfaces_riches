@@ -1,5 +1,6 @@
 package fr.enssat.berrou_couillard.interfaces_riches;
 
+import android.app.ProgressDialog;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private WebView browser;
     private MyWebViewClient myWebViewClient = new MyWebViewClient();
     private MapView mMapView;
+    private ProgressDialog mProgress= new ProgressDialog(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
-            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
+            //mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
         }
         mMapView = findViewById(R.id.mapview);
         mMapView.onCreate(mapViewBundle);
@@ -140,16 +142,17 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    @Override
+   /* @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
+        //Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
         if (mapViewBundle != null) {
             mapViewBundle = new Bundle();
             outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
         }
         mMapView.onSaveInstanceState(mapViewBundle);
     }
+    */
 
     @Override
     protected void onResume() {
@@ -187,8 +190,9 @@ public class MainActivity extends AppCompatActivity {
         mMapView.onLowMemory();
     }
 
-    private void initMap(){
-        mMapView.getMapAsync (new OnMapReadyCallback() {
+
+    private void initMap() {
+        mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 try {
@@ -202,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                         label = mWaypoints.getJSONObject(i).getString(JSON_LABEL);
                         timestamp = mWaypoints.getJSONObject(i).getInt(JSON_TIMESTAMP);
                         Marker marker = googleMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(lat,lng))
+                                .position(new LatLng(lat, lng))
                                 .title(label));
                         marker.setTag(timestamp);
                     }
@@ -212,8 +216,8 @@ public class MainActivity extends AppCompatActivity {
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-                        int timestamp = (int)marker.getTag();
-                        mVideoView.seekTo(timestamp * 1000);
+                        int timestamp = (int) marker.getTag();
+                        vidView.seekTo(timestamp * 1000);
                         return false;
                     }
                 });
@@ -239,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private int setProgress() {
         int position = vidView.getCurrentPosition();
         int duration = vidView.getDuration();
@@ -254,13 +259,15 @@ public class MainActivity extends AppCompatActivity {
         return position;
     }
 
+    /*
     private final Runnable mShowProgress = new Runnable() { @Override
         public void run() {
             int pos = setProgress();
             if (!mDragging && mShowing && vidView.isPlaying()) {
                 postDelayed(mShowProgress, 1000 - (pos % 1000)); }
         }
-    };
+    };*/
+
 
 
 }
