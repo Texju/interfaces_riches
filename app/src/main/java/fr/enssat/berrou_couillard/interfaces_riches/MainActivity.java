@@ -14,6 +14,7 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -237,5 +238,29 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
+
+    private int setProgress() {
+        int position = vidView.getCurrentPosition();
+        int duration = vidView.getDuration();
+        if (mProgress != null) {
+        }
+        if (duration > 0) {
+            // use long to avoid overflow
+            long pos = 1000L * position / duration;
+            mProgress.setProgress( (int) pos);
+        }
+        int percent = vidView.getBufferPercentage();
+        mProgress.setSecondaryProgress(percent * 10);
+        return position;
+    }
+
+    private final Runnable mShowProgress = new Runnable() { @Override
+        public void run() {
+            int pos = setProgress();
+            if (!mDragging && mShowing && vidView.isPlaying()) {
+                postDelayed(mShowProgress, 1000 - (pos % 1000)); }
+        }
+    };
+
 
 }
