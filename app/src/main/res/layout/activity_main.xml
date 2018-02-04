@@ -8,15 +8,15 @@
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
-        android:layout_width="326dp"
-        android:layout_height="62dp"
+        android:layout_width="459dp"
+        android:layout_height="51dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_weight="1"
+        app:layout_constraintBottom_toTopOf="@+id/mapview"
         app:layout_constraintEnd_toStartOf="@+id/webView"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="184dp">
+        app:layout_constraintHorizontal_bias="0.272"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:id="@+id/chapters"
@@ -27,23 +27,12 @@
 
     <WebView
         android:id="@+id/webView"
-        android:layout_width="258dp"
-        android:layout_height="161dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapview"
-        android:layout_width="259dp"
-        android:layout_height="151dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="3"
+        android:layout_width="128dp"
+        android:layout_height="309dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/horizontalScrollView"
-        app:layout_constraintTop_toBottomOf="@+id/webView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <HorizontalScrollView
@@ -58,16 +47,27 @@
             android:orientation="horizontal"></LinearLayout>
     </HorizontalScrollView>
 
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapview"
+        android:layout_width="464dp"
+        android:layout_height="85dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/webView"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <VideoView
         android:id="@+id/videoView"
-        android:layout_width="334dp"
-        android:layout_height="184dp"
+        android:layout_width="462dp"
+        android:layout_height="172dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
         app:layout_constraintEnd_toStartOf="@+id/webView"
-        app:layout_constraintHorizontal_bias="0.25"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
