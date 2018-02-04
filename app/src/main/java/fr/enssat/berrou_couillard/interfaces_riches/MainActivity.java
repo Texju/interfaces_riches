@@ -35,7 +35,14 @@ public class MainActivity extends AppCompatActivity {
     private WebView browser;
     private MyWebViewClient myWebViewClient = new MyWebViewClient();
     private MapView mMapView;
-    private ProgressDialog mProgress= new ProgressDialog(this);
+    private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+    private static final String JSON_LAT="lat";
+    private static final String JSON_LNG="lng";
+    private static final String JSON_LABEL="label";
+    private static final String JSON_TIMESTAMP="timestamp";
+
+    //    private Point mWayPoint;
+    private ProgressDialog mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
-            //mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
+            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
         }
         mMapView = findViewById(R.id.mapview);
         mMapView.onCreate(mapViewBundle);
@@ -71,12 +78,15 @@ public class MainActivity extends AppCompatActivity {
         vidControl = new MediaController(this);
         vidControl.setAnchorView(vidView);
         vidView.setMediaController(vidControl);
+
+        mProgress= new ProgressDialog(this);
         // Chargement des boutons pour les chapitres
         try {
             initChapters();
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        initMap();
     }
 
 
@@ -142,17 +152,16 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-   /* @Override
+   @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
+        Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
         if (mapViewBundle != null) {
             mapViewBundle = new Bundle();
             outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
         }
         mMapView.onSaveInstanceState(mapViewBundle);
     }
-    */
 
     @Override
     protected void onResume() {
@@ -190,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
         mMapView.onLowMemory();
     }
 
-
     private void initMap() {
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -200,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                     long lng = 0;
                     String label = "";
                     int timestamp = 0;
+                    JSONArray mWaypoints = jObject.getJSONArray("Waypoints");
                     for (int i = 0; i < mWaypoints.length(); i++) {
                         lat = mWaypoints.getJSONObject(i).getLong(JSON_LAT);
                         lng = mWaypoints.getJSONObject(i).getLong(JSON_LNG);
@@ -248,25 +257,26 @@ public class MainActivity extends AppCompatActivity {
         int position = vidView.getCurrentPosition();
         int duration = vidView.getDuration();
         if (mProgress != null) {
+            if (duration > 0) {
+                // use long to avoid overflow
+                long pos = 1000L * position / duration;
+                mProgress.setProgress((int) pos);
+            }
+            int percent = vidView.getBufferPercentage();
+            mProgress.setSecondaryProgress(percent * 10);
+            return position;
         }
-        if (duration > 0) {
-            // use long to avoid overflow
-            long pos = 1000L * position / duration;
-            mProgress.setProgress( (int) pos);
-        }
-        int percent = vidView.getBufferPercentage();
-        mProgress.setSecondaryProgress(percent * 10);
-        return position;
     }
 
-    /*
+
+
     private final Runnable mShowProgress = new Runnable() { @Override
         public void run() {
             int pos = setProgress();
             if (!mDragging && mShowing && vidView.isPlaying()) {
                 postDelayed(mShowProgress, 1000 - (pos % 1000)); }
         }
-    };*/
+    };
 
 
 
