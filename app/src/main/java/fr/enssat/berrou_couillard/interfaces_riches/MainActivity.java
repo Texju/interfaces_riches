@@ -227,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
                     public boolean onMarkerClick(Marker marker) {
                         int timestamp = (int) marker.getTag();
                         vidView.seekTo(timestamp * 1000);
+                        myWebViewClient.shouldOverrideUrlLoading(browser,"https://en.wikipedia.org/wiki/"+marker.getTitle());
                         return false;
                     }
                 });
@@ -252,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+/*
     private int setProgress() {
         int position = vidView.getCurrentPosition();
         int duration = vidView.getDuration();
@@ -277,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
                 postDelayed(mShowProgress, 1000 - (pos % 1000)); }
         }
     };
-
+*/
 
 
 }
